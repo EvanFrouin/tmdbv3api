@@ -9,6 +9,7 @@ class Account(TMDb):
     _urls = {
         "details": "/account",
         "watchlist": "/account/%s/watchlist",
+        "favorite": "/account/%s/favorite",
     }
 
     def details(self):
@@ -31,6 +32,22 @@ class Account(TMDb):
                     "media_type": media_type,
                     "media_id": media_id,
                     "watchlist": True,
+                },
+            ),
+            None,
+        )
+    def mark_as_favorite(self, account_id, media_id, media_type):
+        if media_type not in ["tv", "movie"]:
+            raise TMDbException("Media Type should be tv or movie.")
+        return self._get_obj(
+            self._call(
+                self._urls["favorite"] % account_id,
+                "session_id=%s" % os.environ.get("TMDB_SESSION_ID"),
+                method="POST",
+                data={
+                    "media_type": media_type,
+                    "media_id": media_id,
+                    "favorite": True
                 },
             ),
             None,
