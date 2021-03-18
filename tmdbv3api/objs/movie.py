@@ -33,6 +33,7 @@ class Movie(TMDb):
         "similar": "/movie/%s/similar",
         "external": "/find/%s",
         "release_dates": "/movie/%s/release_dates",
+        "rating": "/movie/%s/rating",
     }
 
     def details(
@@ -249,4 +250,23 @@ class Movie(TMDb):
                 "external_source=" + external_source,
             ),
             key=None,
+        )
+    
+    def set_rating(self, movie_id, rating):
+        """
+        The find method makes it easy to search for objects in our database by an external id. For example, an IMDB ID.
+        :param external_id: str
+        :param external_source str
+        :return:
+        """
+        return self._get_obj(
+            self._call(
+                self._urls["rating"] % movie_id,
+                "session_id=%s" % os.environ.get("TMDB_SESSION_ID"),
+                method="POST",
+                data={
+                    "value": int(rating)
+                },
+            ),
+            None,
         )
